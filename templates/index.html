@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href="{{ url_for('static', filename='T-REXLOGO-RM.png') }}"
+        />
+        <link
+          href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"
+          rel="stylesheet"
+        />
+        <link
+          href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+          rel="stylesheet"
+        />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='style.css') }}"
+        />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script
+          type="module"
+          src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"
+        ></script>
+        <script
+          nomodule=""
+          src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.js"
+        ></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <title>T-Rex Pics</title>
+      </head>
+    
+<body>
+    <h1>Upload ảnh và Dự đoán</h1>
+    <form id="autoUploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <div class="avatar-upload">
+            <div class="avatar-edit">
+                <input type="file" name="file" id="imageUpload" accept="image/*">
+                 <label for="imageUpload"></label>  
+            </div>
+            <div class="avatar-preview">
+                {% if message or result %}
+                    <div id="imagePreview" style="background-image: url('{{ url_for('static', filename='upload/temp_image.jpg') }}');"></div>
+                 {% else %}
+                     <div id="imagePreview" ></div>
+                {% endif %}
+            </div>
+        </div>
+        {% if message %}
+        <p id="thongbao">{{ message }}</p>
+       
+    {% endif %}
+    </form>
+
+
+    <form action="/predict" method="post">
+        <button class="button-54" type="submit">Dự đoán</button>
+    </form>
+
+    {% if result %}
+        <p id="ketqua">{{ result }}</p>
+        <div>
+            <span> <a class="button-81" href="{{ google_link }}" target="_blank">Tìm hiểu thêm</a></span>
+        </div>
+    {% endif %}
+
+    <div class="theme-container">
+        <input type="checkbox" class="checkbox" id="checkbox" />
+        <label for="checkbox" class="checkbox-label">
+          <ion-icon name="moon" class="moon"></ion-icon>
+          <ion-icon name="sunny" class="sunny"></ion-icon>
+          <span class="ball"></span>
+        </label>
+      </div>
+    <script>
+
+const modeBtn = document.getElementById("checkbox");
+      modeBtn.onchange = (e) => {
+        if (modeBtn.checked === true) {
+          document.documentElement.classList.remove("light");
+          document.documentElement.classList.add("dark");
+          window.localStorage.setItem("mode", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          window.localStorage.setItem("mode", "light");
+        }
+      };
+
+      const mode = window.localStorage.getItem("mode");
+      if (mode == "dark") {
+        modeBtn.checked = true;
+        document.documentElement.classList.remove("light");
+        document.documentElement.classList.add("dark");
+      }
+
+      if (mode == "light") {
+        modeBtn.checked = false;
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+                    $('#imagePreview').hide();
+                    $('#imagePreview').fadeIn(650);
+                    
+                    // Tự động submit form sau khi chọn ảnh
+                    var form = document.getElementById("autoUploadForm");
+                    form.submit();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    
+        $(document).ready(function () {
+            // Bắt sự kiện thay đổi của input file
+            $("#imageUpload").change(function () {
+                readURL(this);
+            });
+        });
+    </script>
+    
+</body>
+</html>
